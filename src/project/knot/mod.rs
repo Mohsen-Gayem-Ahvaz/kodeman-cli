@@ -1,4 +1,6 @@
-mod operate;
+pub mod operate;
+pub mod ext;
+pub mod utils;
 
 use std::path::PathBuf;
 use chrono::{NaiveDateTime, Utc};
@@ -24,7 +26,7 @@ struct Knot {
     typ: KnotType,
     bac: Option<NaiveDateTime>,
     rop: Vec<Knot>,
-    log: Option<KnotCtx>,
+    ctx: Option<KnotCtx>,
 }
 impl Knot {
     fn default_f() -> Self {
@@ -34,7 +36,7 @@ impl Knot {
             typ: KnotType::F,
             bac: None,
             rop: vec![],
-            log: None,
+            ctx: None,
         }
     }
     fn default_d() -> Self {
@@ -44,7 +46,7 @@ impl Knot {
             typ: KnotType::D,
             bac: None,
             rop: vec![],
-            log: None,
+            ctx: None,
         }
     }
 }
