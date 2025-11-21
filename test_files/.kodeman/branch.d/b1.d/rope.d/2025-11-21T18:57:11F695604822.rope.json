@@ -1,0 +1,20 @@
+{
+  "date": "2025-11-21T18:57:11.695604822",
+  "k": {
+    "pid": "90cbdb1b-c368-4ce6-8b25-dcc3281fe93c",
+    "pth": "",
+    "typ": 2,
+    "bac": null,
+    "rop": [
+      {
+        "pid": "4da02bad-2fe2-4b7b-8f21-76dbd40546e6",
+        "pth": "extra.rs",
+        "typ": 1,
+        "bac": null,
+        "rop": [],
+        "ctx": null
+      }
+    ],
+    "ctx": null
+  }
+}

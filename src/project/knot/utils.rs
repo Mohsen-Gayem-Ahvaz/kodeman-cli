@@ -3,58 +3,60 @@ use std::thread;
 
 
 pub fn compare_ctx(ctx1: Arc<Vec<u8>>, ctx2: Arc<Vec<u8>>)
-    -> (Vec<(usize, Vec<u8>)>, Vec<(usize, Vec<u8>)>)
+    -> Vec<(usize, Vec<u8>)>
 {
 
-    let line_num = Arc::new(RwLock::new(0_usize));
-    let line_num_1 = Arc::clone(&line_num);
-    let line_num_2 = Arc::clone(&line_num);
+    let next = Arc::new(RwLock::new(1_usize));
+    let next_arc_1 = Arc::clone(&next);
+    let next_arc_2 = Arc::clone(&next);
 
-    let line_1: Arc<RwLock<Vec<u8>>> = Arc::new(RwLock::new(Vec::new()));
-    let line_1_arc = Arc::clone(&line_1);
-    let line_2: Arc<RwLock<Vec<u8>>> = Arc::new(RwLock::new(Vec::new()));
-    let line_2_arc = Arc::clone(&line_2);
+    let row_1 = Arc::new(RwLock::new(0_usize));
+    let row_2 = Arc::new(RwLock::new(0_usize));
+    let row_1_arc = Arc::clone(&row_1);
+    let row_2_arc = Arc::clone(&row_2);
 
-    let read_ctx = |ctx: Arc<Vec<u8>>, line: Arc<RwLock<Vec<u8>>>, num: Arc<RwLock<usize>>| {
-        let mut _num = 1_usize;
+    let l1: Arc<RwLock<Vec<u8>>> = Arc::new(RwLock::new(Vec::new()));
+    let l1_arc = Arc::clone(&l1);
+
+    let l2: Arc<RwLock<Vec<u8>>> = Arc::new(RwLock::new(Vec::new()));
+    let l2_arc = Arc::clone(&l2);
+
+    let read_ctx = |
+        ctx: Arc<Vec<u8>>, line: Arc<RwLock<Vec<u8>>>, next: Arc<RwLock<usize>>,
+        row: Arc<RwLock<usize>>
+    | {
+        let mut _row = 1_usize;
         for c in ctx.iter() {
             if *c == '\n' as u8 {
-                while *num.read().unwrap() <= _num {}
+                *row.write().unwrap() = _row;
+                while *next.read().unwrap() == _row {}
+                *line.write().unwrap() = Vec::new();
+                _row += 1;
             }
             line.write().unwrap().push(*c);
         }
     };
 
-    let read_ctx1 = thread::spawn(move || { read_ctx(ctx1, line_1_arc, line_num_1) });
-    let read_ctx2 = thread::spawn(move || { read_ctx(ctx2, line_2_arc, line_num_2) });
+    let read_ctx1 = thread::spawn(move || { read_ctx(ctx1, l1_arc, next_arc_1, row_1_arc) });
+    let read_ctx2 = thread::spawn(move || { read_ctx(ctx2, l2_arc, next_arc_2, row_2_arc) });
 
-    let rem: Vec<(usize, Vec<u8>)> = Vec::new();
-    let add: Vec<(usize, Vec<u8>)> = Vec::new();
+    let mut diff: Vec<(usize, Vec<u8>)> = Vec::new();
 
     while !read_ctx1.is_finished() || !read_ctx2.is_finished() {
-        println!("ctx1 - {}", line_num.read().unwrap());
-        println!("ctx2 - {}", line_num.read().unwrap());
-        *line_num.write().unwrap() += 1;
+        if
+            (*row_1.read().unwrap() == *next.write().unwrap()) &&
+            (*row_2.read().unwrap() == *next.write().unwrap())
+        {
+            if *l1.read().unwrap() != *l2.read().unwrap() {
+                diff.push((*next.read().unwrap(), l2.read().unwrap().clone()));
+            }
+            *next.write().unwrap() += 1;
+        }
     }
 
     read_ctx1.join().unwrap();
     read_ctx2.join().unwrap();
 
-    (rem, add)
+    diff
 }
 
-
-/*
-    for c1 in ctx1 {
-        if *c1 == '\n' as u8 {
-            for c2 in ctx2 {
-                if *c2 == '\n' as u8 {
-
-                }
-                l2.push(c1);
-            }
-            line += 1;
-        }
-        l1.push(c1);
-    }
-*/

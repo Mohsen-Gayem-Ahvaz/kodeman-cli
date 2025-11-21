@@ -1,8 +1,7 @@
 mod response_ext;
 
 use serde::de::DeserializeOwned;
-use serde::{Deserialize, Serialize};
-use std::fmt::{Debug, Display};
+use serde::Serialize;
 use std::fs;
 use std::fs::File;
 use std::io::Write;

@@ -1,9 +1,9 @@
-use std::collections::HashMap;
-use crate::core::{AppResult, BASE_PTH, BASE_ST, MARK_ST};
-use std::fs;
-use crate::core::ext::JsonExt;
 use crate::core::error::AppErrorKind;
+use crate::core::ext::JsonExt;
 use crate::core::states::{BaseState, MarkState};
+use crate::core::{AppResult, BASE_PTH, BASE_ST, MARK_ST};
+use std::collections::HashMap;
+use std::fs;
 
 
 pub fn init_base_pth() -> AppResult<()> {
@@ -37,16 +37,16 @@ pub fn init_base_pth() -> AppResult<()> {
             }
         }
     }
-    
-    BASE_ST.set(
+
+    *BASE_ST.lock().unwrap() = Some(
         BaseState::from_path(&base_pth.join("base.json"))
             .map_err(|e| e.operation("reading base.json"))?
-    ).unwrap();
+    );
 
-    MARK_ST.set(
+    *MARK_ST.lock().unwrap() = Some(
         MarkState::from_path(&base_pth.join("mark.json"))
             .map_err(|e| e.operation("reading mark.json"))?
-    ).unwrap();
+    );
 
     Ok(())
 }

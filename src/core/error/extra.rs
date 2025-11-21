@@ -63,7 +63,6 @@ impl From<IoError> for AppError {
                 AppErrorKind::Io.cause("permission denied for file !")
             },
             IoErrorKind::NotFound => {
-                println!("{}", e);
                 AppErrorKind::Io.cause("file not found !")
             },
             IoErrorKind::AlreadyExists => {

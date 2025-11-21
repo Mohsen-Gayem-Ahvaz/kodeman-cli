@@ -17,6 +17,7 @@ impl Display for ErrorResp {
     }
 }
 
+#[allow(unused)]
 pub trait ResponseExt {
     fn handle_status(self, action: &str) -> AppResult<Self> where Self: Sized;
 }

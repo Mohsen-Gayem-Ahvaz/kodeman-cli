@@ -1,8 +1,8 @@
-use std::path::PathBuf;
 use crate::core::ext::JsonExt;
 use crate::core::{AppResult, BASE_PTH, BASE_ST, MARK_ST};
 use serde::{Deserialize, Serialize};
 use serde_inline_default::serde_inline_default;
+use std::path::PathBuf;
 
 
 #[serde_inline_default]
@@ -40,7 +40,7 @@ impl BaseState {
     pub fn save(&self) -> AppResult<()> {
         let base_dir = BASE_PTH.get().unwrap().clone();
         self.to_path(&base_dir.join("base.json"))?;
-        BASE_ST.set(self.clone()).unwrap();
+        *BASE_ST.lock().unwrap() = Some(self.clone());
         Ok(())
     }
 
@@ -61,7 +61,7 @@ impl MarkState {
         
         let base_dir = BASE_PTH.get().unwrap().clone();
         self.to_path(&base_dir.join("mark.json"))?;
-        MARK_ST.set(self.clone()).unwrap();
+        *MARK_ST.lock().unwrap() = Some(self.clone());
 
         Ok(())
 

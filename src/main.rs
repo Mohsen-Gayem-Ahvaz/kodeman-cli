@@ -3,13 +3,18 @@ pub mod core;
 pub mod project;
 // Lib
 use std::process::ExitCode;
+use clap::Parser;
 use colored::Colorize;
-use crate::core::AppResult;
+use crate::core::{init, AppResult};
+use crate::core::cmd::MainCmd;
+use crate::core::switch::main_switch;
 use crate::core::utils::msg;
 
 
 fn main() -> Result<ExitCode, ExitCode> {
 
+    gentle_run(init::init_base_pth())?;
+    gentle_run(main_switch(MainCmd::parse()))?;
 
     Ok(ExitCode::SUCCESS)
 }

@@ -1,4 +1,5 @@
 use clap::{Parser, Subcommand};
+use crate::project::cmd::ProjectCmd;
 // use crate::project::cmd::{ProjectCmd};
 // use crate::user::cmd::UserCmd;
 
@@ -22,8 +23,8 @@ pub struct MainCmd {
     #[command(flatten)]
     pub flags: MainFlags,
 
-    // #[command(flatten)]
-    // pub project: ProjectCmd,
+    #[command(flatten)]
+    pub project: ProjectCmd,
 
     #[command(subcommand)]
     pub subcommands: Option<SubCommands>
