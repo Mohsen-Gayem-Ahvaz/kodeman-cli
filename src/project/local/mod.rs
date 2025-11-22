@@ -62,7 +62,7 @@ pub fn mark_dir(remark: bool) -> AppResult<()> {
     }
 
     if !wrk_pth.join(".kodeman.json").exists() {
-        KConfig::default().to_path(&wrk_pth.join(".kodeman.json"))?;
+        KConfig::default().to_path(&wrk_pth.join(".kodeman.json"), true)?;
     }
 
     println!("{} project {}", "done:".green(), if !remark {"marked"} else {"re-marked"});

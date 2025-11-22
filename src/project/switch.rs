@@ -16,6 +16,7 @@ pub fn project_switch(a: ProjectCmd) -> AppResult<bool> {
             ProjectSubCommands::Unmark => todo!(),
 
             ProjectSubCommands::Rope => knot::operate::generate()?,
+            ProjectSubCommands::Restore => knot::operate::restore()?,
 
             // ProjectSubCommands::Late => vc::move_rope(0)?,
             // ProjectSubCommands::Back => vc::move_rope(-1)?,
@@ -58,6 +59,9 @@ fn handle_args(a: &ProjectCmd) -> AppResult<bool> {
     } else if let Some(ref upper) = a.local.set_upper {
         local::cud::set_upper_branch(upper)?;
         return Ok(true);
+    } else if a.local.list_rope {
+        local::list::list_ropes()?;
+        return Ok(true);
     }
     // } else if let Some(ref gen_date) = a.local.tree {
     //     vc::visualize::visual_tree(gen_date)?;
@@ -89,12 +93,6 @@ fn handle_args(a: &ProjectCmd) -> AppResult<bool> {
         local::list::list_branches()?;
         if a.flags.pool {
             // service::list::list_branches()?;
-        }
-        return Ok(true);
-    } else if a.local_and_pool.list_rope {
-        // local::list::list_ropes()?;
-        if a.flags.pool {
-            // service::list::list_ropes()?;
         }
         return Ok(true);
     }

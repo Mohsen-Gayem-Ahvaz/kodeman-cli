@@ -14,7 +14,7 @@ use crate::core::ext::JsonExt;
 
 #[derive(Serialize, Deserialize)]
 pub struct Rope {
-    date: NaiveDateTime,
+    pub(crate) date: NaiveDateTime,
     k: Knot,
 }
 impl Rope {
@@ -22,7 +22,7 @@ impl Rope {
         let pth = brh_store.join(
             format!("rope.d/{}.rope.json", self.date.format("%Y-%m-%dT%H:%M:%SF%f"))
         );
-        self.to_path(&pth)
+        self.to_path(&pth, true)
     }
 }
 impl Display for Rope {
@@ -40,7 +40,7 @@ pub struct Knot {
     typ: KnotType,
     bac: Option<NaiveDateTime>,
     rop: Vec<Knot>,
-    ctx: Option<KnotCtx>,
+    // ctx: Option<KnotCtx>,
 }
 impl Knot {
     fn default_d() -> Self {
@@ -50,18 +50,30 @@ impl Knot {
             typ: KnotType::D,
             bac: None,
             rop: vec![],
-            ctx: None,
+            // ctx: None,
         }
     }
 }
 
 
-#[derive(Serialize, Deserialize)]
-pub struct KnotCtx {
-    // Change Set
-    chs: Vec<(usize, Vec<u8>)>,
-}
+// #[derive(Serialize, Deserialize)]
+// pub struct KnotCtx {
+//     // Change Set
+//     chs: Vec<(usize, Vec<u8>)>,
+// }
 
+
+#[derive(Serialize, Deserialize)]
+pub struct ChangeSet {
+    pub set: Vec<Change>,
+    pub len: usize,
+}
+impl JsonExt for ChangeSet {}
+#[derive(Serialize, Deserialize)]
+pub struct Change {
+    pub row: usize,
+    pub cnt: Vec<u8>,
+}
 
 #[derive(Deserialize_repr, Serialize_repr, PartialEq)]
 #[repr(u8)]

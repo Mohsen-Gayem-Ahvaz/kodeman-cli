@@ -61,5 +61,6 @@ pub enum AppErrorKind {
 
     Unknown,
     ResourceTooLarge,
+    BacRopeIsGone,
 }
 

@@ -1,3 +1,4 @@
+use std::path::PathBuf;
 // Lib
 use clap::ArgGroup;
 use clap::{Parser, Subcommand};
@@ -64,6 +65,8 @@ pub struct LocalArgs {
     #[clap(long, help="remove branch from local")]
     pub rm_branch: Option<String>,
 
+    #[clap(long, help="list ropes (use -p to fetch list from pool)")]
+    pub list_rope: bool,
     #[clap(long, help="list included languages of upper branch")]
     pub list_lang: bool,
 
@@ -78,14 +81,12 @@ pub struct LocalArgs {
 #[command(
     group(
         ArgGroup::new("g.local-and-pool").required(false).multiple(false)
-        .args(&["list_branch", "list_rope"])
+        .args(&["list_branch"])
     ),
 )]
 pub struct LocalAndPoolArgs {
     #[clap(long, help="list branches (use -p to fetch list from pool)")]
     pub list_branch: bool,
-    #[clap(long, help="list ropes (use -p to fetch list from pool)")]
-    pub list_rope: bool,
 }
 
 
@@ -121,6 +122,8 @@ pub enum ProjectSubCommands {
     Back,
     #[clap(alias="next-rope", about="move to next rope (base on gen-date)")]
     Next,
+    #[clap(about="restore all files from latest rope")]
+    Restore,
 
     #[clap(alias="mig", about="migrate latest ropes to pool")]
     Migrate,

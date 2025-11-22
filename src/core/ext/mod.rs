@@ -17,16 +17,22 @@ pub trait JsonExt {
         Ok(serde_json::from_str::<Self>(&contents)?)
     }
 
-    fn to_file(&self, mut f: File) -> AppResult<()> where Self: Serialize {
-        let contents = serde_json::to_string_pretty(self)?;
+    fn to_file(&self, mut f: File, pretty: bool) -> AppResult<()> where Self: Serialize {
+        let contents = if pretty {
+            serde_json::to_string_pretty(&self)?
+        } else { serde_json::to_string(&self)? };
+
         f.write_all(contents.as_bytes())?;
         f.flush()?;
         Ok(())
     }
 
-    fn to_path(&self, p: &PathBuf) -> AppResult<()> where Self: Serialize {
+    fn to_path(&self, p: &PathBuf, pretty: bool) -> AppResult<()> where Self: Serialize {
         let mut f = fs::OpenOptions::new().create(true).truncate(true).write(true).open(p)?;
-        let contents = serde_json::to_string_pretty(self)?;
+        let contents = if pretty {
+            serde_json::to_string_pretty(&self)?
+        } else { serde_json::to_string(&self)? };
+
         f.write_all(contents.as_bytes())?;
         f.flush()?;
         Ok(())

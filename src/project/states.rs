@@ -72,7 +72,7 @@ impl ProjectState {
         if pth.exists() && !update {
             return AppErrorKind::ProjectAlreadyExists.cause("another project found").into();
         }
-        self.to_path(pth)?;
+        self.to_path(pth, true)?;
         Ok(())
 
     }

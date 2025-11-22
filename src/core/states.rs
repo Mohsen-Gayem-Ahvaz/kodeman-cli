@@ -39,7 +39,7 @@ impl BaseState {
 
     pub fn save(&self) -> AppResult<()> {
         let base_dir = BASE_PTH.get().unwrap().clone();
-        self.to_path(&base_dir.join("base.json"))?;
+        self.to_path(&base_dir.join("base.json"), true)?;
         *BASE_ST.lock().unwrap() = Some(self.clone());
         Ok(())
     }
@@ -60,7 +60,7 @@ impl MarkState {
     pub fn save(&self) -> AppResult<()> {
         
         let base_dir = BASE_PTH.get().unwrap().clone();
-        self.to_path(&base_dir.join("mark.json"))?;
+        self.to_path(&base_dir.join("mark.json"), true)?;
         *MARK_ST.lock().unwrap() = Some(self.clone());
 
         Ok(())

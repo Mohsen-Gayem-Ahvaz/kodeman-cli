@@ -32,9 +32,9 @@ pub fn temp_store<M>(ctx: Option<&M>) -> AppResult<PathBuf>
         match fs::File::create_new(&pth) {
             Ok(f) => {
                 if let Some(ctx) = ctx {
-                    ctx.to_file(f)?;
+                    ctx.to_file(f, true)?;
                 } else {
-                    M::default().to_file(f)?;
+                    M::default().to_file(f, true)?;
                 }
                 break;
             },

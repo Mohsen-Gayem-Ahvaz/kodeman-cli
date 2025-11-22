@@ -1,0 +1,18 @@
+{
+  "date": "2025-11-22T20:34:56.999062058",
+  "k": {
+    "pid": "97de8422-44fc-4e35-9ae6-cb2a9ab4f4ac",
+    "pth": "",
+    "typ": 2,
+    "bac": null,
+    "rop": [
+      {
+        "pid": "516569d6-c4ae-4b62-9da3-242c7185c44e",
+        "pth": "states.rs",
+        "typ": 1,
+        "bac": null,
+        "rop": []
+      }
+    ]
+  }
+}
