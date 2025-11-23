@@ -120,7 +120,7 @@ pub fn new_branch() -> AppResult<()> {
         description: new_brh.description,
         created_at: Utc::now().naive_utc(),
         updated_at: None,
-        struct_rope: None,
+        late_rope: None,
         pool: None,
     };
 

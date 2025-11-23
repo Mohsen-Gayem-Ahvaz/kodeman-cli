@@ -13,20 +13,12 @@ pub fn project_switch(a: ProjectCmd) -> AppResult<bool> {
         match subcommand {
             ProjectSubCommands::Mark => local::mark_dir(false)?,
             ProjectSubCommands::Remark => local::mark_dir(true)?,
-            ProjectSubCommands::Unmark => todo!(),
 
             ProjectSubCommands::Rope => knot::operate::generate()?,
-            ProjectSubCommands::Restore => knot::operate::restore()?,
+            ProjectSubCommands::Restore{date} => knot::operate::restore(date)?,
+            ProjectSubCommands::Switch{ date } => knot::operate::switch_to_date(&date)?,
 
-            // ProjectSubCommands::Late => vc::move_rope(0)?,
-            // ProjectSubCommands::Back => vc::move_rope(-1)?,
-            // ProjectSubCommands::Next => vc::move_rope(1)?,
-
-            // ProjectSubCommands::Migrate => service::migrate::migrate(true, true)?,
-            // ProjectSubCommands::MigrateRope => service::migrate::migrate(true, false)?,
-            // ProjectSubCommands::MigrateBin => service::migrate::migrate(false, true)?,
-
-            _ => {}
+            ProjectSubCommands::Tree { date } => knot::visualize::visual_tree(&date)?,
         }
         Ok(true)
     } else {
@@ -63,10 +55,6 @@ fn handle_args(a: &ProjectCmd) -> AppResult<bool> {
         local::list::list_ropes()?;
         return Ok(true);
     }
-    // } else if let Some(ref gen_date) = a.local.tree {
-    //     vc::visualize::visual_tree(gen_date)?;
-    //     return Ok(true);
-    // }
 
     // Pool
     // else if let Some(ref name) = a.pool.fetch_project {

@@ -70,8 +70,6 @@ pub struct LocalArgs {
     #[clap(long, help="list included languages of upper branch")]
     pub list_lang: bool,
 
-    #[clap(long, help="display tree of latest rope")]
-    pub tree: Option<String>,
     #[clap(long, help="display life-cycle of a knot in all upper-branch ropes")]
     pub life_cycle: bool,
 }
@@ -112,24 +110,20 @@ pub struct ProjectCmd {
 pub enum ProjectSubCommands {
     Mark,
     Remark,
-    Unmark,
 
     Rope,
+    #[clap(about="restore all files based on struct-rope")]
+    Restore {
+        date: Option<String>,
+    },
+    #[clap(about="switch struct-rope based on date")]
+    Switch {
+        date: String,
+    },
 
-    #[clap(alias="late-rope", about="move to latest rope")]
-    Late,
-    #[clap(alias="back-rope", about="move to pre rope (base on gen-date)")]
-    Back,
-    #[clap(alias="next-rope", about="move to next rope (base on gen-date)")]
-    Next,
-    #[clap(about="restore all files from latest rope")]
-    Restore,
-
-    #[clap(alias="mig", about="migrate latest ropes to pool")]
-    Migrate,
-    #[clap(about="only migrate rope conf to pool")]
-    MigrateRope,
-    #[clap(about="only migrate bin file to pool")]
-    MigrateBin,
+    #[clap(about="display tree of latest rope")]
+    Tree {
+        date: String,
+    }
 }
 

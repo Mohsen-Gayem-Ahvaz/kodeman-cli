@@ -5,6 +5,7 @@ use crate::project::knot::{utils, ChangeSet, Knot, KnotType};
 use std::path::Path;
 use chrono::NaiveDateTime;
 
+
 impl Knot {
 
     pub fn find_knot(&mut self, pth: &Path, typ: &KnotType) -> Option<&mut Knot> {
@@ -38,9 +39,7 @@ impl Knot {
                 .cause("bac knot config is not present")
         })?;
 
-
         let mut cnt_bac = if let Some(ref date) = bac_first.bac {
-            println!("bac from {}", date);
             bac_first.build_cnt(date).unwrap()
         } else {
             utils::get_cnt(&r_bac_first.date, &bac_first.pid).unwrap().lines().map(|l| {
@@ -50,7 +49,6 @@ impl Knot {
 
         if let Some(changeset) = changeset {
             for change in changeset.set {
-                println!("{:?}", change.cnt);
                 if change.row - 1 < cnt_bac.len() {
                     cnt_bac[change.row - 1] = change.cnt;
                 } else {
@@ -61,6 +59,28 @@ impl Knot {
         }
 
         Ok(cnt_bac)
+    }
+
+
+    pub fn get_cnt_knot_date(&self) -> AppResult<NaiveDateTime> {
+
+        let mut bac_r_first = utils::get_rope(&self.bac.unwrap()).ok_or_else(|| {
+            AppErrorKind::BacRopeIsGone
+                .operation("finding content knot")
+                .cause("bac rope config is not present")
+        })?;
+        let bac_k_first = bac_r_first.k.find_knot(&self.pth, &self.typ).ok_or_else(|| {
+            AppErrorKind::BacRopeIsGone
+                .operation("finding content knot")
+                .cause("bac knot config is not present")
+        })?;
+        
+        if let Some(date) = &bac_k_first.bac {
+            bac_k_first.get_cnt_knot_date()
+        } else {
+            Ok(bac_r_first.date.clone())
+        }
+
     }
 
 }

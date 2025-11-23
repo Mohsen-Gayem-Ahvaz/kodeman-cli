@@ -68,8 +68,8 @@ impl MarkState {
     }
 
 }
-#[derive(Debug, Clone, Deserialize, Default, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq)]
 pub struct Marked {
-    
+    pub pth: PathBuf,
 }
 

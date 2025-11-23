@@ -114,7 +114,7 @@ pub struct  BranchState {
     pub created_at: NaiveDateTime,
     pub updated_at: Option<NaiveDateTime>,
 
-    pub struct_rope: Option<NaiveDateTime>,
+    pub late_rope: Option<NaiveDateTime>,
     pub pool: Option<BranchResp>,
 }
 impl JsonExt for BranchState {}

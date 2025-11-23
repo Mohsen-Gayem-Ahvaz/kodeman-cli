@@ -40,9 +40,9 @@ pub fn scan(k: &mut Knot, wrk: &PathBuf, curr: &PathBuf, store: &PathBuf) -> App
                 typ: KnotType::D,
                 bac: None,
                 rop: vec![],
-                // ctx: None,
             };
             scan(&mut knot, wrk, &e_pth, store).unwrap();
+            k.rop.push(knot);
         }
     }
 
@@ -52,7 +52,7 @@ pub fn scan(k: &mut Knot, wrk: &PathBuf, curr: &PathBuf, store: &PathBuf) -> App
 
 pub fn scan_compare(
     k1: &mut Knot, k2: &mut Knot, wrk: &PathBuf, curr: &PathBuf, store1: &PathBuf,
-    store2: &PathBuf, r1_date: &NaiveDateTime, r2_date: &NaiveDateTime
+    store2: &PathBuf, r1_date: &NaiveDateTime
 ) -> AppResult<()> {
 
     for e in fs::read_dir(curr).unwrap() {
@@ -68,60 +68,35 @@ pub fn scan_compare(
                 typ: KnotType::F,
                 bac: None,
                 rop: vec![],
-                // ctx: None,
             };
             let ctx1 = Arc::new(fs::read(&e_pth).unwrap());
             let ctx1_arc = Arc::clone(&ctx1);
             let mut ctx2: Vec<u8> = Vec::new();
-            let k_2 = k2.find_knot(&k_pth, &KnotType::F);
 
-            if let Some(k_2) = k_2 {
-                knot.pid = k_2.pid.clone();
-                if let Some(ref date) = k_2.bac {
+            if let Some(knot2) = k2.find_knot(&k_pth, &KnotType::F) {
 
-                    let ctx2_lines =  k_2.build_cnt(date).unwrap();
-                    for l in ctx2_lines {
-                        ctx2.extend(l);
-                        ctx2.push(b'\n');
+                knot.pid = knot2.pid.clone();
+                knot2.bac = Some(r1_date.clone());
+
+                let mut f_old = fs::File::open(store2.join(format!("{}.ctx", knot2.pid))).unwrap();
+            f_old.read_to_end(&mut ctx2).unwrap();
+                let mut f_new = fs::File::create(store1.join(format!("{}.ctx", knot.pid))).unwrap();
+                f_new.write_all(&ctx1).unwrap();
+                fs::remove_file(&store2.join(format!("{}.ctx", knot2.pid))).unwrap();
+
+                let ctx2_lines_len = ctx2.lines().count();
+                let changes = compare_ctx(ctx1_arc, Arc::new(ctx2)).iter().map(|v| {
+                    Change {
+                        row: v.0,
+                        cnt: v.1.clone(),
                     }
-                    let ctx2_lines_len = ctx2.lines().count();
-                    let changes = compare_ctx(Arc::new(ctx2), ctx1_arc).iter().map(|v| {
-                        Change {
-                            row: v.0,
-                            cnt: v.1.clone(),
-                        }
-                    }).collect::<Vec<Change>>();
-                    let chs = ChangeSet {
-                        set: changes,
-                        len: ctx2_lines_len,
-                    };
-                    println!("here: {:?}", &store1.join(format!("{}.chs", knot.pid)));
-                    knot.bac = Some(r2_date.clone());
-                    chs.to_path(&store1.join(format!("{}.chs", knot.pid)), false).unwrap();
+                }).collect::<Vec<Change>>();
+                let chs = ChangeSet {
+                    set: changes,
+                    len: ctx2_lines_len,
+                };
+                chs.to_path(&store2.join(format!("{}.chs", knot2.pid)), false).unwrap();
 
-                }
-                else {
-
-                    k_2.bac = Some(r1_date.clone());
-                    let mut f_old = fs::File::open(store2.join(format!("{}.ctx", k_2.pid))).unwrap();
-                f_old.read_to_end(&mut ctx2).unwrap();
-                    let mut f_new = fs::File::create(store1.join(format!("{}.ctx", knot.pid))).unwrap();
-                    f_new.write_all(&ctx1).unwrap();
-                     fs::remove_file(&store2.join(format!("{}.ctx", k_2.pid))).unwrap();
-                    let ctx2_lines_len = ctx2.lines().count();
-                    let changes = compare_ctx(ctx1_arc, Arc::new(ctx2)).iter().map(|v| {
-                        Change {
-                            row: v.0,
-                            cnt: v.1.clone(),
-                        }
-                    }).collect::<Vec<Change>>();
-                    let chs = ChangeSet {
-                        set: changes,
-                        len: ctx2_lines_len,
-                    };
-                    chs.to_path(&store2.join(format!("{}.chs", k_2.pid)), false).unwrap();
-
-                }
             } else {
                 let mut f_new = fs::File::create(store1.join(format!("{}.ctx", knot.pid))).unwrap();
                 f_new.write_all(&ctx1).unwrap();
@@ -129,21 +104,21 @@ pub fn scan_compare(
             k1.rop.push(knot);
         }
         else if e_typ.is_dir() && e_name != ".kodeman" {
+
             let mut knot = Knot {
                 pid: Uuid::new_v4(),
                 pth: k_pth.clone(),
                 typ: KnotType::D,
                 bac: None,
                 rop: vec![],
-                // ctx: None,
             };
-            let k_2 = k2.find_knot(&k_pth, &KnotType::D);
-            if let Some(k_2) = k_2 {
-                scan_compare(&mut knot, k_2, wrk, &e_pth, store1, store2, r1_date, r2_date).unwrap();
+            if let Some(knot2) = k2.find_knot(&k_pth, &KnotType::D) {
+                scan_compare(&mut knot, knot2, wrk, &e_pth, store1, store2, r1_date).unwrap();
             } else {
                 scan(&mut knot, wrk, &e_pth, store1).unwrap();
             }
             k1.rop.push(knot);
+
         }
     }
 
@@ -263,15 +238,16 @@ pub fn get_changeset(date: &NaiveDateTime, pid: &Uuid) -> Option<ChangeSet> {
 }
 
 
-pub fn restore(k: &Knot, date: &NaiveDateTime, wrk: &PathBuf, store: &PathBuf) -> AppResult<()> {
+pub fn re_structure(
+    k: &Knot, date: &NaiveDateTime, wrk: &PathBuf, store: &PathBuf, all: bool
+) -> AppResult<()> {
 
     for k in k.rop.iter() {
         let pth = wrk.join(&k.pth);
         if k.typ == KnotType::F {
-            if pth.exists() { continue; }
+            if !all && pth.exists() { continue; }
             let mut f = fs::File::create(&pth).unwrap();
             if let Some(bac) = k.bac {
-                println!("bac from {}", bac);
                 let ctn_lines = k.build_cnt(date).unwrap();
                 let mut ctn: Vec<u8> = Vec::new();
                 for l in ctn_lines {
@@ -284,7 +260,7 @@ pub fn restore(k: &Knot, date: &NaiveDateTime, wrk: &PathBuf, store: &PathBuf) -
                 f.write_all(&ctn).unwrap();
             }
         } else {
-            restore(k, date, wrk, store).unwrap();
+            re_structure(k, date, wrk, store, all).unwrap();
         }
     }
 

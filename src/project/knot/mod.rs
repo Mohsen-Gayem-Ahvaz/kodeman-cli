@@ -1,6 +1,7 @@
 pub mod operate;
 pub mod ext;
 pub mod utils;
+pub mod visualize;
 
 use std::fmt::Display;
 use chrono::NaiveDateTime;
