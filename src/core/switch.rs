@@ -13,7 +13,7 @@ pub fn main_switch(main_cmd: MainCmd) -> AppResult<()> {
 
     if let Some(cmd) = main_cmd.subcommands {
         match cmd {
-            SubCommands::Config => Ok(()),
+            
         }
     } else {
         MainCmd::command().print_help()?;

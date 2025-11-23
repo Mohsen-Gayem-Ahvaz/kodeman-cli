@@ -1,0 +1,62 @@
+{
+  "date": "2025-11-23T10:40:06.423266220",
+  "k": {
+    "pid": "bd6b2c4a-3f6e-40d8-b963-255b422b7ce7",
+    "pth": "",
+    "typ": 2,
+    "bac": null,
+    "rop": [
+      {
+        "pid": "980ae2b5-44e8-4835-b983-ff0321c9cc2b",
+        "pth": ".kodeman.json",
+        "typ": 1,
+        "bac": null,
+        "rop": []
+      },
+      {
+        "pid": "7dc73506-24ed-4b8a-8e4e-5b9caf2a19bc",
+        "pth": "libs",
+        "typ": 2,
+        "bac": null,
+        "rop": [
+          {
+            "pid": "92320389-85f4-436d-9dc1-e09bfcb4134b",
+            "pth": "libs/host.rs",
+            "typ": 1,
+            "bac": null,
+            "rop": []
+          }
+        ]
+      },
+      {
+        "pid": "d20532f0-8cc9-4c1d-9ae6-faec0545f9cc",
+        "pth": "main.rs",
+        "typ": 1,
+        "bac": null,
+        "rop": []
+      },
+      {
+        "pid": "565b373d-5327-42fd-81d1-cbf2ef3eb76c",
+        "pth": "sigma",
+        "typ": 2,
+        "bac": null,
+        "rop": [
+          {
+            "pid": "1f3f5e63-90bb-44d9-af1f-e37c4ae4c6b4",
+            "pth": "sigma/alpha.txt",
+            "typ": 1,
+            "bac": null,
+            "rop": []
+          }
+        ]
+      },
+      {
+        "pid": "dd699e54-8b8a-450a-bd4e-bb5e3e2a6bda",
+        "pth": "states.rs",
+        "typ": 1,
+        "bac": null,
+        "rop": []
+      }
+    ]
+  }
+}

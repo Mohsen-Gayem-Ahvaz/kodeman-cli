@@ -4,12 +4,12 @@ pub mod utils;
 pub mod visualize;
 
 use std::fmt::Display;
-use chrono::NaiveDateTime;
+use chrono::{NaiveDateTime, Utc};
 use serde::{Deserialize, Serialize};
 use serde_repr::{Deserialize_repr, Serialize_repr};
 use std::path::PathBuf;
 use uuid::Uuid;
-use crate::core::AppResult;
+use crate::core::{AppResult, BRH_ST, WRK_PTH};
 use crate::core::ext::JsonExt;
 
 
@@ -19,9 +19,13 @@ pub struct Rope {
     k: Knot,
 }
 impl Rope {
-    pub fn save(&self, brh_store: &PathBuf) -> AppResult<()> {
-        let pth = brh_store.join(
-            format!("rope.d/{}.rope.json", self.date.format("%Y-%m-%dT%H:%M:%SF%f"))
+    pub fn save(&self) -> AppResult<()> {
+        let brh_name = &BRH_ST.get().unwrap().name;
+        let pth = WRK_PTH.get().unwrap().join(
+            format!(
+                ".kodeman/branch.d/{}.d/rope.d/{}.rope.json",
+                brh_name, self.date.format("%Y-%m-%dT%H:%M:%SF%f")
+            )
         );
         self.to_path(&pth, true)
     }

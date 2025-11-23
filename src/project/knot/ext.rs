@@ -1,10 +1,27 @@
-use std::io::BufRead;
 use crate::core::error::AppErrorKind;
-use crate::core::AppResult;
-use crate::project::knot::{utils, ChangeSet, Knot, KnotType};
-use std::path::Path;
+use crate::core::ext::JsonExt;
+use crate::core::{AppResult, BRH_ST, WRK_PTH};
+use crate::project::knot::{ChangeSet, Knot, KnotType, Rope};
 use chrono::NaiveDateTime;
+use std::fs;
+use std::io::BufRead;
+use std::path::Path;
 
+
+impl Rope {
+
+    pub fn get_rope(date: &NaiveDateTime) -> Option<Self> {
+        let brh_name = &BRH_ST.get().unwrap().name;
+        let pth = WRK_PTH.get().unwrap().join(
+            format!(
+                ".kodeman/branch.d/{}.d/rope.d/{}.rope.json",
+                brh_name, date.format("%Y-%m-%dT%H:%M:%SF%f")
+            )
+        );
+        Rope::from_path(&pth).map_err(|e| e.quiet()).ok()
+    }
+
+}
 
 impl Knot {
 
@@ -20,15 +37,14 @@ impl Knot {
                 }
             }
         }
-
         None
     }
 
 
     pub fn build_cnt(&self, r_date: &NaiveDateTime) -> AppResult<Vec<Vec<u8>>> {
 
-        let changeset = utils::get_changeset(r_date, &self.pid);
-        let mut r_bac_first = utils::get_rope(&self.bac.unwrap()).ok_or_else(||{
+        let changeset = self.get_changeset(r_date);
+        let mut r_bac_first = Rope::get_rope(&self.bac.unwrap()).ok_or_else(||{
             AppErrorKind::BacRopeIsGone
                 .operation("building knot")
                 .cause("bac rope config is not present")
@@ -40,9 +56,9 @@ impl Knot {
         })?;
 
         let mut cnt_bac = if let Some(ref date) = bac_first.bac {
-            bac_first.build_cnt(date).unwrap()
+            bac_first.build_cnt(date)?
         } else {
-            utils::get_cnt(&r_bac_first.date, &bac_first.pid).unwrap().lines().map(|l| {
+            bac_first.get_cnt(&r_bac_first.date).unwrap().lines().map(|l| {
                 l.unwrap().as_bytes().to_vec()
             }).collect::<Vec<Vec<u8>>>()
         };
@@ -62,9 +78,9 @@ impl Knot {
     }
 
 
-    pub fn get_cnt_knot_date(&self) -> AppResult<NaiveDateTime> {
+    pub fn get_origin_bac(&self) -> AppResult<NaiveDateTime> {
 
-        let mut bac_r_first = utils::get_rope(&self.bac.unwrap()).ok_or_else(|| {
+        let mut bac_r_first = Rope::get_rope(&self.bac.unwrap()).ok_or_else(|| {
             AppErrorKind::BacRopeIsGone
                 .operation("finding content knot")
                 .cause("bac rope config is not present")
@@ -75,12 +91,36 @@ impl Knot {
                 .cause("bac knot config is not present")
         })?;
         
-        if let Some(date) = &bac_k_first.bac {
-            bac_k_first.get_cnt_knot_date()
+        if let Some(_) = &bac_k_first.bac {
+            bac_k_first.get_origin_bac()
         } else {
             Ok(bac_r_first.date.clone())
         }
 
+    }
+
+
+    pub fn get_changeset(&self, date: &NaiveDateTime) -> Option<ChangeSet> {
+        let brh_name = &BRH_ST.get().unwrap().name;
+        let pth = WRK_PTH.get().unwrap().join(
+            format!(
+                ".kodeman/branch.d/{}.d/ctx.d/{}/{}.chs",
+                brh_name, date.format("%Y-%m-%dT%H:%M:%SF%f"), self.pid
+            )
+        );
+        ChangeSet::from_path(&pth).map_err(|e| e.quiet()).ok()
+    }
+
+
+    pub fn get_cnt(&self, date: &NaiveDateTime) -> Option<Vec<u8>> {
+        let brh_name = &BRH_ST.get().unwrap().name;
+        let pth = WRK_PTH.get().unwrap().join(
+            format!(
+                ".kodeman/branch.d/{}.d/ctx.d/{}/{}.ctx",
+                brh_name, date.format("%Y-%m-%dT%H:%M:%SF%f"), self.pid
+            )
+        );
+        fs::read(&pth).ok()
     }
 
 }

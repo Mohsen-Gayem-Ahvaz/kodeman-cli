@@ -1,6 +1,7 @@
 // Mod
 pub mod core;
 pub mod project;
+
 // Lib
 use std::process::ExitCode;
 use clap::Parser;
@@ -11,32 +12,34 @@ use crate::core::switch::main_switch;
 use crate::core::utils::msg;
 
 
-fn main() -> Result<ExitCode, ExitCode> {
+fn main() -> ExitCode {
 
-    gentle_run(init::init_base_pth())?;
-    gentle_run(main_switch(MainCmd::parse()))?;
+    if !gentle_run(init::init_base_pth()) {
+        return ExitCode::FAILURE;
+    };
+    if !gentle_run(main_switch(MainCmd::parse())) {
+        return ExitCode::FAILURE;
+    };
 
-    Ok(ExitCode::SUCCESS)
+    ExitCode::SUCCESS
 }
 
 
-fn gentle_run(res: AppResult<()>) -> Result<(), ExitCode> {
+fn gentle_run(res: AppResult<()>) -> bool {
     if let Err(e) = res {
         if !e.quiet {
-            println!("{} {}", "error:".on_red(), e.operation + " failed !");
+            eprintln!("{} {}", "error:".on_red(), e.operation + " failed !");
             if !e.cause.is_empty() {
-                println!("{} {}", "cause:".on_red(), e.cause);
+                eprintln!("{} {}", "cause:".on_red(), e.cause);
             }
             if !e.service.is_empty() {
-                println!("{}", format!("service message: {}", e.service).yellow());
+                eprintln!("{}", format!("service message: {}", e.service).yellow());
             }
             if !e.hint.is_empty() {
                 msg::hint(&e.hint);
             }
+            eprintln!("\n{}", "kodeman: status code 1".bright_red());
         }
-        println!("\n{}", "kodeman: status code 1".bright_red());
-        Err(ExitCode::FAILURE)
-    } else {
-        Ok(())
-    }
+        false
+    } else { true }
 }

@@ -1,4 +1,4 @@
-pub mod cud;
+pub mod crud;
 pub mod list;
 
 use std::collections::HashMap;

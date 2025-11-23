@@ -23,6 +23,7 @@ pub enum AppErrorKind {
     ConfigParse,
     InputParse,
     Form,
+    NotYetImplemented,
 
     // Encrypt & Decrypt
     Rsa,

@@ -12,7 +12,7 @@ use rsa::pkcs8::EncodePrivateKey;
 use serde::Serialize;
 use std::io::ErrorKind as IoErrorKind;
 use colored::Colorize;
-use crate::core::error::AppError;
+use crate::core::error::{AppError, AppErrorKind};
 use crate::core::ext::JsonExt;
 use crate::core::AppResult;
 use crate::core::BASE_PTH;
@@ -99,3 +99,8 @@ pub fn cpu_task<F, R>(mut func: F, act: &str) -> R where F: FnMut() -> R {
     io::stdout().flush().unwrap(); r
 }
 
+
+pub fn todo(v: &str) -> AppError {
+    eprintln!("this feature will be implement in version {v}");
+    AppErrorKind::NotYetImplemented.quiet()
+}

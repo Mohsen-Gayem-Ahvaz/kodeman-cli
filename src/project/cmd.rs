@@ -1,4 +1,3 @@
-use std::path::PathBuf;
 // Lib
 use clap::ArgGroup;
 use clap::{Parser, Subcommand};
@@ -69,9 +68,6 @@ pub struct LocalArgs {
     pub list_rope: bool,
     #[clap(long, help="list included languages of upper branch")]
     pub list_lang: bool,
-
-    #[clap(long, help="display life-cycle of a knot in all upper-branch ropes")]
-    pub life_cycle: bool,
 }
 
 
@@ -108,22 +104,30 @@ pub struct ProjectCmd {
 
 #[derive(Debug, Subcommand)]
 pub enum ProjectSubCommands {
+    #[clap(about="mark this directory as a project path")]
     Mark,
+    #[clap(about="remake directory if it is broken")]
     Remark,
 
+    #[clap(about="generate new rope")]
     Rope,
-    #[clap(about="restore all files based on struct-rope")]
+    #[clap(about="restore all files based on late-rope or input date")]
     Restore {
         date: Option<String>,
     },
-    #[clap(about="switch struct-rope based on date")]
+    #[clap(about="switch all files based on input date")]
     Switch {
         date: String,
     },
 
-    #[clap(about="display tree of latest rope")]
+    // Visualize
+    #[clap(about="display tree based on input date")]
     Tree {
         date: String,
-    }
+    },
+    #[clap(about="display life-cycle of a knot in all upper-branch ropes")]
+    Life {
+        pth: String
+    },
 }
 

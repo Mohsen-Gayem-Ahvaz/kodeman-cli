@@ -1,16 +1,16 @@
-use crate::project::local::find_wrk_pth;
-use crate::project::states::ProjectState;
-use crate::{AppResult};
-use chrono::NaiveDateTime;
-use colored::Colorize;
 use crate::core::error::{AppError, AppErrorKind};
 use crate::core::{BRH_ST, FLAG, WRK_PTH};
-use crate::project::knot::{utils, Knot, KnotType, Rope};
+use crate::project::knot::{Knot, KnotType, Rope};
+use crate::project::local::find_wrk_pth;
+use crate::project::states::ProjectState;
+use crate::AppResult;
+use chrono::NaiveDateTime;
+use colored::Colorize;
 
 
 pub fn visual_tree(date: &str) -> AppResult<()> {
 
-    let gen_date = NaiveDateTime::parse_from_str(date, "%Y-%m-%dT%H:%M:%SF%f").map_err(|e| {
+    let date = NaiveDateTime::parse_from_str(date, "%Y-%m-%dT%H:%M:%SF%f").map_err(|e| {
         AppError::from(e).operation("visualize tree").cause("invalid generate date")
     })?;
     let verbose = FLAG.get().unwrap().verbose;
@@ -20,7 +20,7 @@ pub fn visual_tree(date: &str) -> AppResult<()> {
     let brh_st = prj_st.upper_branch()?;
     BRH_ST.set(brh_st.clone()).unwrap();
 
-    let r = utils::get_rope(&gen_date).ok_or_else(||
+    let r = Rope::get_rope(&date).ok_or_else(||
         AppErrorKind::NoRope
             .cause("no rope with this generate date found")
             .hint("use '--list-rope' to display all ropes by generate date")
@@ -30,7 +30,7 @@ pub fn visual_tree(date: &str) -> AppResult<()> {
         let len = k.rop.len();
         for (ix, k) in k.rop.iter().enumerate() {
             let name = k.pth.file_name().unwrap().to_str().unwrap();
-            for ind in 0..i/4 {
+            for _ in 0..i/4 {
                 print!("│{}", " ".repeat(4));
             }
             if k.typ == KnotType::F {
@@ -57,8 +57,7 @@ pub fn visual_tree(date: &str) -> AppResult<()> {
 }
 
 
-#[allow(unused)]
-pub fn visual_knot_life_cycle(pth: &str) -> String {
-    todo!()
+pub fn visual_knot_life_cycle(_pth: &str) -> String {
+    todo!("this feature will be implement in version 1.1.0")
 }
 

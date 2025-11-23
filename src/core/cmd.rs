@@ -33,7 +33,5 @@ pub struct MainCmd {
 
 #[derive(Debug, Subcommand)]
 pub enum SubCommands {
-    // User(UserCmd),
-    Config,
 }
 
