@@ -4,7 +4,7 @@ use crate::core::{AppResult, BASE_PTH, BASE_ST};
 use crate::user::states::UserState;
 
 
-pub fn _get_default_user() -> AppResult<UserState> {
+pub fn get_default_user() -> AppResult<UserState> {
 
     let base_st = BASE_ST.lock().unwrap().clone().unwrap();
     if base_st.default_user.is_empty() {
