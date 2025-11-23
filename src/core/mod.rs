@@ -8,26 +8,20 @@ pub mod states;
 pub mod cmd;
 pub mod switch;
 
-// Lib
-use std::collections::HashMap;
-use std::path::PathBuf;
-use std::sync::{Mutex, OnceLock};
-use once_cell::sync::Lazy;
 use crate::core::cmd::MainFlags;
 use crate::core::error::AppError;
 use crate::core::states::{BaseState, MarkState};
 use crate::project::states::{BranchState, KConfig, ProjectState};
+use once_cell::sync::Lazy;
+use std::path::PathBuf;
+use std::sync::{Mutex, OnceLock};
 
 
 // App
-pub static APP_INFO: Lazy<HashMap<&str, &str>> = Lazy::new(|| {
-    HashMap::from([
-        ("name", "kodeman-cli"),
-        ("version", "0.3.0"),
-        ("authors", "* Mohsen G.Ahvaz, email: mohsen.g.a.2001@gmail.com"),
-    ])
-});
-
+pub static APP_INFO: [&str; 4] = [
+    "kodeman-cli", "0.3.0",  "* Mohsen G.Ahvaz, email: mohsen.g.a.2001@gmail.com",
+    "© 2025 Kodeman Tools, LLC, All rights reserved "
+];
 
 // Types
 pub type AppResult<T> = Result<T, AppError>;

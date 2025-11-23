@@ -13,7 +13,7 @@ pub fn main_switch(main_cmd: MainCmd) -> AppResult<()> {
 
     if let Some(cmd) = main_cmd.subcommands {
         match cmd {
-            
+
         }
     } else {
         MainCmd::command().print_help()?;
@@ -26,9 +26,13 @@ pub fn main_switch(main_cmd: MainCmd) -> AppResult<()> {
 fn handle_args(a: &MainCmd) -> AppResult<bool> {
 
     if a.version {
-        println!("kodeman-cli {}", APP_INFO["version"]); return Ok(true);
+        println!("{} {}", APP_INFO[0], APP_INFO[1]);
+        println!("{}", APP_INFO[3]);
+        return Ok(true);
     } else if a.author {
-        println!("{}", APP_INFO["authors"]); return Ok(true);
+        println!("{}", APP_INFO[2]);
+        println!("{}", APP_INFO[3]);
+        return Ok(true);
     }
 
     Ok(false)
