@@ -247,13 +247,14 @@ pub fn re_structure(
     k: &Knot, date: &NaiveDateTime, wrk: &PathBuf, store: &PathBuf, all: bool
 ) -> AppResult<()> {
 
-    for k in k.rop.iter() {
-        let pth = wrk.join(&k.pth);
-        if k.typ == KnotType::F {
+    for knot in k.rop.iter() {
+        let pth = wrk.join(&knot.pth);
+        if knot.typ == KnotType::F {
             if !all && pth.exists() { continue; }
+            fs::create_dir_all(&pth.parent().unwrap())?;
             let mut f = fs::File::create(&pth)?;
-            if let Some(_) = k.bac {
-                let ctn_lines = k.build_cnt(date)?;
+            if let Some(_) = knot.bac {
+                let ctn_lines = knot.build_cnt(date)?;
                 let mut ctn: Vec<u8> = Vec::new();
                 for l in ctn_lines {
                     ctn.extend(l);
@@ -261,11 +262,11 @@ pub fn re_structure(
                 }
                 f.write_all(&ctn).unwrap();
             } else {
-                let ctn = fs::read(&store.join(format!("{}.ctx", k.pid))).unwrap();
+                let ctn = fs::read(&store.join(format!("{}.ctx", knot.pid))).unwrap();
                 f.write_all(&ctn).unwrap();
             }
         } else {
-            re_structure(k, date, wrk, store, all).unwrap();
+            re_structure(knot, date, wrk, store, all).unwrap();
         }
     }
 

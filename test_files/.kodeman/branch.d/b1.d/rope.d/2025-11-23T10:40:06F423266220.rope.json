@@ -10,7 +10,7 @@
         "pid": "980ae2b5-44e8-4835-b983-ff0321c9cc2b",
         "pth": ".kodeman.json",
         "typ": 1,
-        "bac": null,
+        "bac": "2025-11-23T23:08:18.683186346",
         "rop": []
       },
       {
@@ -23,7 +23,7 @@
             "pid": "92320389-85f4-436d-9dc1-e09bfcb4134b",
             "pth": "libs/host.rs",
             "typ": 1,
-            "bac": null,
+            "bac": "2025-11-23T23:08:18.683186346",
             "rop": []
           }
         ]
@@ -32,7 +32,7 @@
         "pid": "d20532f0-8cc9-4c1d-9ae6-faec0545f9cc",
         "pth": "main.rs",
         "typ": 1,
-        "bac": null,
+        "bac": "2025-11-23T23:08:18.683186346",
         "rop": []
       },
       {
@@ -45,7 +45,7 @@
             "pid": "1f3f5e63-90bb-44d9-af1f-e37c4ae4c6b4",
             "pth": "sigma/alpha.txt",
             "typ": 1,
-            "bac": null,
+            "bac": "2025-11-23T23:08:18.683186346",
             "rop": []
           }
         ]
@@ -54,7 +54,7 @@
         "pid": "dd699e54-8b8a-450a-bd4e-bb5e3e2a6bda",
         "pth": "states.rs",
         "typ": 1,
-        "bac": null,
+        "bac": "2025-11-23T23:08:18.683186346",
         "rop": []
       }
     ]
