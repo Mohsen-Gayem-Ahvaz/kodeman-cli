@@ -7,6 +7,7 @@ pub mod init;
 pub mod states;
 pub mod cmd;
 pub mod switch;
+pub mod http;
 
 use crate::core::cmd::MainFlags;
 use crate::core::error::AppError;
@@ -20,7 +21,7 @@ use std::sync::{Mutex, OnceLock};
 // App
 pub static APP_INFO: [&str; 4] = [
     "kodeman-cli", "0.3.0",  "* Mohsen G.Ahvaz, email: mohsen.g.a.2001@gmail.com",
-    "© 2025 Kodeman Tools, LLC, All rights reserved "
+    "© 2025 Kodeman Tools, LLC, All rights reserved"
 ];
 
 // Types

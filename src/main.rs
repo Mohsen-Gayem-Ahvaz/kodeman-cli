@@ -1,6 +1,7 @@
 // Mod
 pub mod core;
 pub mod project;
+mod user;
 
 // Lib
 use std::process::ExitCode;

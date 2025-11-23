@@ -1,8 +1,8 @@
-use clap::CommandFactory;
-use crate::core::{AppResult, FLAG, APP_INFO};
 use crate::core::cmd::{MainCmd, SubCommands};
+use crate::core::{AppResult, APP_INFO, FLAG};
 use crate::project::switch::project_switch;
-
+use clap::CommandFactory;
+use crate::user;
 
 pub fn main_switch(main_cmd: MainCmd) -> AppResult<()> {
 
@@ -13,8 +13,9 @@ pub fn main_switch(main_cmd: MainCmd) -> AppResult<()> {
 
     if let Some(cmd) = main_cmd.subcommands {
         match cmd {
-
-        }
+            SubCommands::User(cmd) => user::switch::user_switch(cmd)?,
+        };
+        Ok(())
     } else {
         MainCmd::command().print_help()?;
         Ok(())

@@ -1,5 +1,6 @@
 use clap::{Parser, Subcommand};
 use crate::project::cmd::ProjectCmd;
+use crate::user::cmd::UserCmd;
 // use crate::project::cmd::{ProjectCmd};
 // use crate::user::cmd::UserCmd;
 
@@ -33,5 +34,6 @@ pub struct MainCmd {
 
 #[derive(Debug, Subcommand)]
 pub enum SubCommands {
+    User(UserCmd),
 }
 
